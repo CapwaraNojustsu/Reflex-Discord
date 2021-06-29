@@ -347,3 +347,5 @@ function notific(mem, ntf){
 }
 
 client.login(config.token);
+
+//vs: 0.35v|29\06\2021
