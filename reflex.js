@@ -1,7 +1,18 @@
+//configurações iniciais
+
 const discord = require('discord.js');
 
 const client = new discord.Client();
 const config = require("./reflex.json");
+
+var checkLog = false;
+
+var currQuest = 0;
+
+const quests = [
+    "5. Qual seu nome verdadeiro, pode ser utilizado um nome fictiício desde que você possa se indentificado por ele.",
+    "6. Função dentro da reflex."
+];
 
 client.on("ready", ()=>{
     console.log("\nbot on-");
@@ -20,10 +31,6 @@ function novNum(){
     P1A = Math.floor(Math.random() * 500);P1B = Math.floor(Math.random() * 1500);
 }
 
-const help = "\n\n\n**Comandos**\ncomando: /help\n\n--*Reflex*--";
-
-var checkLog = false;
-
 client.on("message", async message => {
     if(message.author.bot){return;}else{if(message.channel.type === "type"){return;}}
     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
@@ -33,18 +40,30 @@ client.on("message", async message => {
     
     const member = message.member;
 
+    const comando = {
+        ping: ()=>{message.reply("Pong!").then((pingMessage) => {message.delete();
+                        message.channel.send(`${pingMessage.createdTimestamp - message.createdTimestamp}ms`).then((messagePong)=>{
+                            setTimeout(()=>{
+                                pingMessage.delete();
+                                messagePong.delete();
+                            }, 5000);
+                        });
+                    }
+                    );},
+        calc: ()=>{
+            const calculo = message.content.replace(/ calcA/, "");
+            message.reply(eval(calculo));
+        },
+        log: ()=>{
+            checkLog = !checkLog;
+            message.delete();
+            return message.member.send("log " + checkLog);
+        }
+    }
+
     if(checkLog){
         console.log(message.channel.name + "\n    > " + message.member.user.username + ": " + message.content);
     }
-
-    //interessante
-        if(message.content.includes("interessante")){
-            const m = message.reply("desculpa cara, essa palavra não existe aqui").then((mEssage)=>{
-                setTimeout(()=>{
-                    mEssage.delete();
-                }, 1500);
-            });
-        }
 
     //recrutamento
         if(command === "recrutamento"){
@@ -79,76 +98,59 @@ client.on("message", async message => {
                 }
         }
         
-        if(command === "r"){
-            let perg = [num, resp] = args;
+        function questsF(pos){
+            message.channel.send(quests[pos]);
+        }
 
-            if(num == "1"){
-                if(resp == "10"){
-                    novNum();
-                    message.channel.send("2. Quanto é " + P1A + " + " + P1B + "?");
-                }else{
-                    message.reply("Errado!");
-                    return;
+        const recrutamento = {
+            recrutamento: (val, numQ)=>{client.channels.cache.get("857041168722034728").send((numQ + 5) + ": " + val); questsF(numQ+1); currQuest++},
+            completo: ()=>{message.member.roles.add(message.guild.roles.cache.find(role => role.name === "Membro"));
+                            message.member.roles.remove(message.guild.roles.cache.find(role => role.name === "Recruta"));
+                            message.channel.send("<@&798707299060285461>").then((adm)=>{
+                                setTimeout(()=>{adm.delete();}, 500);
+                            });
+                        }
+        }
+
+        if(command === "r"){
+            let [num, resp] = args;
+
+            //perguntas de captcha
+                if(num == "1"){
+                    if(resp == "10"){
+                        novNum();
+                        message.channel.send("2. Quanto é " + P1A + " + " + P1B + "?");
+                    }else{
+                        message.reply("Errado!");
+                        return;
+                    }
+                }if(num == "2"){
+                    if((resp == (P1A+P1B))){
+                        message.channel.send("3. ∞-∞=0(tirar infinito de infinito resulta em zero); verdadeiro(v) ou falso(f)?");
+                    }else{
+                        novNum();
+                        message.channel.send("2. Quanto é " + P1A + " + " + P1B + "?");
+                        return;
+                    }
+                }if(num == "3"){
+                    if(resp){
+                        message.channel.send("4. Um ∞(infinito) formado apenas por números pares = um ∞(infinito) formado por todos os números naturais; verdadeiro(v) ou falso(f)?");
+                    }
+                }if(num == "4"){
+                    if(resp){
+                        questsF(0);
+                        message.reply("Captcha terminado.").then((messageCaptcha) => {
+                            setTimeout(()=>{messageCaptcha.delete();}, 2500);
+                        });
+                    }
                 }
-            }if(num == "2"){
-                if((resp == (P1A+P1B))){
-                    message.channel.send("3. ∞-∞=0(tirar infinito de infinito resulta em zero); verdadeiro(v) ou falso(f)?");
-                }else{
-                    novNum();
-                    message.channel.send("2. Quanto é " + P1A + " + " + P1B + "?");
-                    return;
-                }
-            }if(num == "3"){
-                if(resp == "falso" || resp == "f"){
-                    message.channel.send("4. Um ∞(infinito) formado apenas por números pares = um ∞(infinito) formado por todos os números naturais; verdadeiro(v) ou falso(f)?");
-                }else{
-                    message.channel.send("4. Um ∞(infinito) formado apenas por números pares = um ∞(infinito) formado por todos os números naturais; verdadeiro(v) ou falso(f)?");
-                    return;
-                }
-            }if(num == "4"){
-                if(resp == "verdadeiro" || resp == "v"){
-                    message.channel.send("5. Qual seu nome verdadeiro, pode ser utilizado um nome fictiício desde que você possa se indentificado por ele.");
-                    message.reply("Captcha terminado.").then((messageCaptcha) => {
-                        setTimeout(()=>{messageCaptcha.delete();}, 2500);
-                    });
-                }else{
-                    message.channel.send("5. Qual seu nome verdadeiro, pode ser utilizado um nome fictiício desde que você possa se indentificado por ele.");
-                    message.reply("Captcha terminado.").then((messageCaptcha) => {
-                        setTimeout(()=>{messageCaptcha.delete();}, 2500);
-                    });
-                    return;
-                }
-            }if(num === "5"){
-                if(resp){
-                    message.channel.send("6. Função dentro da reflex.");
-                    client.channels.cache.get("857041168722034728").send("nome do usuário: " + resp);
-                    //client.channels.cache.get("857041168722034728").send("nome do usuário: " + resp);
-                }else{
-                    message.channel.send("Por favor, um valor diferente de nulo").then((msg) =>{setTimeout(()=>{msg.delete()}, 6000);});
-                    message.delete();
-                }
-            }if(num === "6"){
-                client.channels.cache.get("857041168722034728").send("função do usuário: " + resp);
-                message.member.roles.add(message.guild.roles.cache.find(role => role.name === "Membro"));
-                message.member.roles.remove(message.guild.roles.cache.find(role => role.name === "Recruta"));
-                message.channel.send("<@&798707299060285461>").then((adm)=>{
-                    setTimeout(()=>{adm.delete();}, 500);
-                });
-            }
+
+            if(num == (currQuest+5)) recrutamento.recrutamento(resp, currQuest);
         }
 
     //membros
         if(command === "ping"){
-            message.reply("Pong!").then((pingMessage) => {
-                message.delete();
-                message.channel.send(`${pingMessage.createdTimestamp - message.createdTimestamp}ms`).then((messagePong)=>{
-                    setTimeout(()=>{
-                        pingMessage.delete();
-                        messagePong.delete();
-                    }, 5000);
-                });
-            }
-            );
+            comando.ping();
         }
 
         //calculadora
@@ -213,8 +215,7 @@ client.on("message", async message => {
                 }
             }
             if(message.content.match(" calcA")){
-                const calculo = message.content.replace(/ calcA/, "");
-                message.reply(eval(calculo));
+                comando.calc();
             }
 
     //admin
@@ -294,9 +295,7 @@ client.on("message", async message => {
         }
 
         if(command === "log"){
-            checkLog = !checkLog;
-            message.delete();
-            return message.member.send("log " + checkLog);
+            comando.log();
         }
 });
 
