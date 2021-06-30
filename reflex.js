@@ -1,4 +1,5 @@
 //configurações iniciais
+//token removido por questões de segurança
 
 const discord = require('discord.js');
 
@@ -9,9 +10,15 @@ var checkLog = false;
 
 var currQuest = 0;
 
+var initCom = "DGzn^tWtqAW#TSFDNjUB65&f9G^8&DD&mjc8w4fCfmVKXmUVSY";
+
 const quests = [
     "5. Qual seu nome verdadeiro, pode ser utilizado um nome fictiício desde que você possa se indentificado por ele.",
-    "6. Função dentro da reflex."
+    "6. Função dentro da reflex.",
+    "7. Você se sentiria feliz no seu futuro cargo?",
+    "8. Você acha que seu trabalho é bom?",
+    "9. Qual valor você daria ao seu trabalho?",
+    "10. O que você acha mais correto?\n a)Ser fiel e não contestar ninguém que aparentemente tem uma posição maior que a sua pelo único motivo de não ter experiência o suficiente;\n ou \nb)Deve ser crítico e têm que dar sua opinião para que ela melhore o que esteja sendo feito, independente do quão boa ou ruim ela seja."
 ];
 
 client.on("ready", ()=>{
@@ -70,10 +77,10 @@ client.on("message", async message => {
             let recru = [cod] = args;
                 if(message.member.roles.cache.find(r => r.name === 'Recruta')){
                     if(!args[0]){
-                        message.member.send("seu código: DGzn^tWtqAW#TSFDNjUB65&f9G^8&DD&mjc8w4fCfmVKXmUVSY" + message.member.user.username.replace(" ", "") + message.member.user.id);
+                        message.member.send("seu código:" + initCom + message.member.user.username.replace(" ", "") + message.member.user.id);
                         message.reply(`\nRecruta: ${message.member.user.username}.\nId: ${message.member.user.id}.\n\nUse novamente o comando /recrutamento, porém adicione o código que lhe foi enviado: /recrutamento ([código])`);
                     }else{
-                        if(cod === ("DGzn^tWtqAW#TSFDNjUB65&f9G^8&DD&mjc8w4fCfmVKXmUVSY" + message.member.user.username.replace(" ", "") + message.member.user.id)){
+                        if(cod === (initCom + message.member.user.username.replace(" ", "") + message.member.user.id)){
                             message.delete();
                             message.reply("vai começar agora seu recrutamento!").then((messageMessage) => {
                                 message.member.send("você está no nosso sistema, agora você pode fazer seu recrutamento.\n\n/recrutamento recrutar");
@@ -89,7 +96,7 @@ client.on("message", async message => {
                         }else{
                             message.delete();
                             message.member.send("código inválido");
-                            console.log("DGzn^tWtqAW#TSFDNjUB65&f9G^8&DD&mjc8w4fCfmVKXmUVSY" + message.member.user.username + message.member.user.id);
+                            console.log(initCom + message.member.user.username + message.member.user.id);
                         }
                     }
                 }else{
@@ -244,7 +251,7 @@ client.on("message", async message => {
             }
                 if(com === "code"){
                     message.delete();
-                    message.member.send(("DGzn^tWtqAW#TSFDNjUB65&f9G^8&DD&mjc8w4fCfmVKXmUVSY" + message.member.user.username + message.member.user.id));
+                    message.member.send((initCom + message.member.user.username.replace(" ", "") + message.member.user.id));
                 }else if(com === "commands"){
                         message.delete();
                         message.member.send("-\ncomandos para usar no comando reflex\n\n/reflex\n**code** *retorna o seu código de usuário reflex*\n**commands** *retorna a lista de comandos que pode ser utilizados dentro do comando \"reflex\"*");
