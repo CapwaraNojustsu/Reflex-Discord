@@ -13,8 +13,8 @@ var currQuest = 0;
 var initCom = "DGzn^tWtqAW#TSFDNjUB65&f9G^8&DD&mjc8w4fCfmVKXmUVSY";
 
 const quests = [
-    "5. Qual seu nome verdadeiro, pode ser utilizado um nome fictiício desde que você possa se indentificado por ele.",
-    "6. Função dentro da reflex.",
+    "5. Qual seu nome verdadeiro, pode ser utilizado um nome fictício desde que você possa se identificado por ele.",
+    "6. Qual função à ser exercida dentro da reflex.",
     "7. Você se sentiria feliz no seu futuro cargo?",
     "8. Você acha que seu trabalho é bom?",
     "9. Qual valor você daria ao seu trabalho?",
